@@ -3,8 +3,28 @@
 
 import * as React from 'react'
 
-function UsernameForm({ onSubmitUsername }) {
+function UsernameForm({onSubmitUsername}) {
   // 🐨 add a submit event handler here (`handleSubmit`).
+  const userNameRef = React.useRef()
+  // const [userNameGet, userNameSet] = React.useState()
+  const [errorMessage, errorSet] = React.useState(null)
+  const handleSubmit = event => {
+    // this event is created by react called SyntheticBaseEvent
+    // to use the native event created by browser use : event.nativeEvent
+    event.preventDefault()
+
+    // console.log(event)
+    // onSubmitUsername(event.target.elements.username.value)
+    console.log(userNameRef)
+    onSubmitUsername(userNameRef.current.value)
+  }
+  const changeHandler = event => {
+    const {value} = event.target
+    const isLowerCase = value === value.toLowerCase()
+
+    errorSet(!isLowerCase ? 'username will be lowercase' : null)
+    // userNameSet(event.target.value)
+  }
   // 💰 Make sure to accept the `event` as an argument and call
   // `event.preventDefault()` to prevent the default behavior of form submit
   // events (which refreshes the page).
@@ -20,12 +40,21 @@ function UsernameForm({ onSubmitUsername }) {
   // 🐨 make sure to associate the label to the input.
   // to do so, set the value of 'htmlFor' prop of the label to the id of input
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <div>
-        <label>Username:</label>
-        <input type="text" />
+        <label htmlFor="username">Username:</label>
+        <input
+          name="username"
+          id="username"
+          type="text"
+          ref={userNameRef}
+          onChange={changeHandler}
+        />
       </div>
-      <button type="submit">Submit</button>
+      <button disabled={!!errorMessage} type="submit">
+        Submit
+      </button>
+      <div style={{color: 'red'}}>{errorMessage}</div>
     </form>
   )
 }
